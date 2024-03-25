@@ -1,4 +1,4 @@
-CREATE jason 4 bool double int string label1 label2 label3 label4
+CREATE jason 4 bool double int string bools doubles ints strings
 CREATE jason 3 bool bool bool l1 l2 l3
 INSERT INTO jason 3 ROWS
 false 3.3 2 snark
@@ -10,4 +10,5 @@ is
 so
 damn
 cool
+PRINT FROM jason 2 ints bools ALL
 QUIT

@@ -77,6 +77,8 @@ void run_program(){
         } else if (cmd == "INSERT"){
 
             insert();
+        } else if (cmd == "PRINT"){
+            print();
         }
 
     } while (cmd != "QUIT");
@@ -210,12 +212,9 @@ void insert(){
             switch(column_types[name][j]){
 
                 case EntryType::Bool:
-                    cin >> hold;
-                    if (hold[0] == 'f'){
-                        shell[name][j].emplace_back(false);
-                    } else {
-                        shell[name][j].emplace_back(true);
-                    }
+                    bool val0;
+                    cin >> val0;
+                    shell[name][j].emplace_back(val0);
                     break;
 
                 case EntryType::Double:
@@ -242,14 +241,82 @@ void insert(){
 
         }
     }
-    pos2 = shell[name][0].size() - 1;
+    pos2 = shell[name].size() - 1;
 
     cout << "Added " << rows << " rows to " << name << " from position " << pos1 << " to " << pos2 << "\n";
 
 }
 
-private:
+// need to make sure output order is correct
+void print(){
 
+    string hold;
+    string name;
+    size_t col_num;
+
+    cin >> hold;
+    cin >> name; // contains name of table
+    cin >> col_num;
+
+    vector<size_t> col_indices;
+
+    // create a vector of size_t that contains all the column indices
+    for (size_t i = 0; i < col_num; ++i){
+        cin >> hold;
+        
+        // prints column names
+        cout << hold << " ";
+
+    // finds indices of the columns
+        for (size_t j = 0; j < column_names[name].size(); ++j){
+
+            
+            if (column_names[name][j] == hold){
+                col_indices.push_back(j);
+                break;
+            }
+        }
+    }
+
+    cout << "\n";
+
+
+    // check if ALL or WHERE is specified
+    cin >> hold;
+    if (hold == "ALL"){
+        print_all(col_indices, name);
+    } else {
+        print_where();
+    }
+
+
+
+
+
+}
+
+void print_all(vector<size_t> &col_indices, string &name){
+
+    for (size_t j = 0; j < shell[name][0].size(); ++j){
+
+        for (size_t i = 0; i < col_indices.size(); ++i){
+            cout << shell[name][col_indices[i]][j] << " "; 
+        }
+
+        cout << "\n";
+    }
+
+    cout << "Printed " << shell[name][0].size() << " matching rows from " << name << "\n";
+
+}
+
+void print_where(){
+
+
+
+}
+
+private:
 unordered_map <string, vector<vector<TableEntry>>> shell;
 unordered_map <string, vector<string>> column_names;
 unordered_map <string, vector<EntryType>> column_types;
@@ -270,6 +337,8 @@ bool quiet_mode;
 int main(int argc, char* argv[]){
     ios_base::sync_with_stdio(false);
     xcode_redirect(argc,argv);
+    cin >> std::boolalpha;  // add these two lines
+    cout << std::boolalpha;
 
     //  double val;
     // cin >> val;
@@ -287,5 +356,6 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
-// TODO
-// fix double read in
+// TODO:
+// print ... all command
+// add getlines to all the non-readable commands
